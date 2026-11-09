@@ -1,0 +1,24 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["Sales","_Measures"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Sales
+ref table Dim_Date
+ref table 'Discount Cap'
+ref table _Measures
+ref table DateTableTemplate_4d72d2e5-fd7b-41c4-92a9-eb684d6aa93c
+ref table LocalDateTable_0a96343a-2289-46c0-bf5e-3d775007b9c4
+ref table LocalDateTable_b84bf5ae-a3a9-433a-a314-73237c84062d
+
+ref cultureInfo en-US
+

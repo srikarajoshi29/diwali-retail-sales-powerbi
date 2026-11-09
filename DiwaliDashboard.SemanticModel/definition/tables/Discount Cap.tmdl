@@ -1,0 +1,15 @@
+table 'Discount Cap'
+	lineageTag: ae222885-4820-4e7d-afb1-337154bc5f37
+
+	column Value
+		dataType: int64
+		formatString: 0
+		lineageTag: 90412fb6-f517-4676-8098-2c694f379c4b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Value]
+
+	partition 'Discount Cap' = calculated
+		mode: import
+		source = GENERATESERIES ( 0, 30, 5 )
+

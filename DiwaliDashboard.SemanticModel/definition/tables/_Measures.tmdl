@@ -1,0 +1,193 @@
+table _Measures
+	lineageTag: d5db1023-a637-46f0-b302-45f9fbe3f465
+
+	measure 'Net Revenue' = CALCULATE ( SUM ( Sales[Net_Sales_INR] ), Sales[Valid_Revenue] = "Yes" )
+		formatString: #,0
+		displayFolder: 1 Core
+		lineageTag: d93c6742-01fc-441f-aa90-6e9822b83fa7
+
+	measure 'Total Cost' = CALCULATE ( SUM ( Sales[Estimated_Cost_INR] ) + SUM ( Sales[Shipping_Cost_INR] ), Sales[Valid_Revenue] = "Yes" )
+		formatString: #,0
+		displayFolder: 1 Core
+		lineageTag: 759cb14d-1dc3-453b-ac10-f1ee295832f3
+
+	measure Profit = [Net Revenue] - [Total Cost]
+		formatString: #,0
+		displayFolder: 1 Core
+		lineageTag: 34c9ba69-f62b-4779-863b-121d6341395d
+
+	measure 'Profit Margin %' = DIVIDE ( [Profit], [Net Revenue] )
+		formatString: 0.0%
+		displayFolder: 1 Core
+		lineageTag: 6012589a-3a94-428d-840e-510c2b3a81d0
+
+	measure Orders = CALCULATE ( DISTINCTCOUNT ( Sales[Order_ID] ), Sales[Valid_Revenue] = "Yes" )
+		formatString: #,0
+		displayFolder: 1 Core
+		lineageTag: 6d43bcf3-33dc-4aa7-97b9-043a36a43645
+
+	measure AOV = DIVIDE ( [Net Revenue], [Orders] )
+		formatString: #,0
+		displayFolder: 1 Core
+		lineageTag: 560f3821-0cf5-4ba7-8d43-ea250c739625
+
+	measure Customers = CALCULATE ( DISTINCTCOUNT ( Sales[Customer_ID] ), Sales[Valid_Revenue] = "Yes" )
+		formatString: #,0
+		displayFolder: 1 Core
+		lineageTag: 655aba25-a611-4dc0-a46b-c754d6d5629d
+
+	measure 'Order Lines' = COUNTROWS ( Sales )
+		formatString: #,0
+		displayFolder: 1 Core
+		lineageTag: 652bfdc4-d974-4a9e-8084-ab507f9d6237
+
+	measure 'Avg Rating' = AVERAGE ( Sales[Rating_Valid] )
+		formatString: 0.0
+		displayFolder: 1 Core
+		lineageTag: 3f552ad8-a3a1-4e51-aae9-0afedaf41106
+
+	measure 'Avg Delivery Days' = AVERAGE ( Sales[Days_To_Deliver] )
+		formatString: 0.0
+		displayFolder: 1 Core
+		lineageTag: 68bfe6c9-92c8-4bd1-abf2-36479be7f07f
+
+	measure 'Net Revenue (₹ Cr)' = DIVIDE ( [Net Revenue], 10000000 )
+		formatString: #,0.00
+		displayFolder: 1 Core
+		lineageTag: d895bef6-ee9f-4483-8bc3-a5897cfea484
+
+	measure 'Profit (₹ Cr)' = DIVIDE ( [Profit], 10000000 )
+		formatString: #,0.00
+		displayFolder: 1 Core
+		lineageTag: ebf845cd-64bf-424f-bd42-a4797236e4f3
+
+	measure 'Revenue Lost' = CALCULATE ( SUM ( Sales[Net_Sales_INR] ), Sales[Valid_Revenue] = "No" )
+		formatString: #,0
+		displayFolder: 2 Leakage
+		lineageTag: 830d1489-eefc-4f80-8183-6f9254a2b0b0
+
+	measure 'Revenue Lost (₹ Cr)' = DIVIDE ( [Revenue Lost], 10000000 )
+		formatString: #,0.00
+		displayFolder: 2 Leakage
+		lineageTag: 466cc4a9-0352-47c6-a74c-549bd14ef292
+
+	measure 'Revenue Lost %' = DIVIDE ( [Revenue Lost], SUM ( Sales[Net_Sales_INR] ) )
+		formatString: 0.0%
+		displayFolder: 2 Leakage
+		lineageTag: bfaf2601-c200-4f14-9716-8795d8272c74
+
+	measure 'Return Rate' = DIVIDE ( CALCULATE ( COUNTROWS ( Sales ), Sales[Order_Status] = "Returned" ), COUNTROWS ( Sales ) )
+		formatString: 0.0%
+		displayFolder: 2 Leakage
+		lineageTag: 5557e0dc-48f8-4a3f-98ce-39214ccd5f6b
+
+	measure 'Cancel Rate' = DIVIDE ( CALCULATE ( COUNTROWS ( Sales ), Sales[Order_Status] = "Cancelled" ), COUNTROWS ( Sales ) )
+		formatString: 0.0%
+		displayFolder: 2 Leakage
+		lineageTag: 0c1a9a14-923b-47c3-9d3b-bd9d0e542487
+
+	measure 'Revenue PY' =
+			VAR Yr = SELECTEDVALUE ( Sales[Order_Year] )
+			RETURN
+				IF ( NOT ISBLANK ( Yr ), CALCULATE ( [Net Revenue], Sales[Order_Year] = Yr - 1 ) )
+		formatString: #,0
+		displayFolder: 3 Growth
+		lineageTag: fc1ac3ef-7ec0-4d30-bd97-6522afd8d878
+
+	measure 'YoY %' = DIVIDE ( [Net Revenue] - [Revenue PY], [Revenue PY] )
+		formatString: 0.0%
+		displayFolder: 3 Growth
+		lineageTag: c1abbf3e-b1e7-4088-844b-ed30cdf8fc9f
+
+	measure 'Revenue Share %' = DIVIDE ( [Net Revenue], CALCULATE ( [Net Revenue], ALLSELECTED ( Sales ) ) )
+		formatString: 0.0%
+		displayFolder: 3 Growth
+		lineageTag: c4b9ef47-6acd-45bd-bd0b-45687bac4f30
+
+	measure 'Revenue at 20%+ Discount %' = DIVIDE ( CALCULATE ( [Net Revenue], Sales[Discount_Pct] >= 20 ), [Net Revenue] )
+		formatString: 0.0%
+		displayFolder: 4 Discounts
+		lineageTag: 05395e6d-5d4f-4dc1-9d31-7de6d9006c30
+
+	measure 'Margin at 20%+ Discount' = DIVIDE ( CALCULATE ( [Profit], Sales[Discount_Pct] >= 20 ), CALCULATE ( [Net Revenue], Sales[Discount_Pct] >= 20 ) )
+		formatString: 0.0%
+		displayFolder: 4 Discounts
+		lineageTag: 39bb3cab-2e63-4bf5-9712-807d2426ee0a
+
+	measure 'Selected Year Label' = IF ( ISFILTERED ( Sales[Order_Year] ), "Year: " & SELECTEDVALUE ( Sales[Order_Year], "Multiple" ), "All years 2022-2025" )
+		displayFolder: 5 Storytelling
+		lineageTag: 418f31c8-20b6-492f-9188-bc92b89bd938
+
+	measure 'Top Category Insight' =
+			VAR TopCat = TOPN ( 1, VALUES ( Sales[Category] ), [Net Revenue], DESC )
+			VAR CatName = MAXX ( TopCat, Sales[Category] )
+			VAR CatShare = DIVIDE ( CALCULATE ( [Net Revenue], Sales[Category] = CatName ), [Net Revenue] )
+			RETURN
+				CatName & " leads with " & FORMAT ( CatShare, "0%" ) & " of revenue"
+		displayFolder: 5 Storytelling
+		lineageTag: ecd2705e-6c7d-4de4-8f4d-00001c2ab046
+
+	measure 'Multi-Season Customer %' =
+			VAR ValidCust = CALCULATETABLE ( VALUES ( Sales[Customer_ID] ), Sales[Valid_Revenue] = "Yes" )
+			VAR WithSeasons =
+				ADDCOLUMNS (
+					ValidCust,
+					"@Seasons", CALCULATE ( DISTINCTCOUNT ( Sales[Order_Year] ), Sales[Valid_Revenue] = "Yes", ALL ( Sales[Order_Year] ) )
+				)
+			RETURN
+				DIVIDE ( COUNTROWS ( FILTER ( WithSeasons, [@Seasons] > 1 ) ), COUNTROWS ( WithSeasons ) )
+		formatString: 0.0%
+		displayFolder: 5 Storytelling
+		lineageTag: 59f72e6d-08d9-43ca-953f-50a25623e01c
+
+	measure 'Discount Cap Value' = SELECTEDVALUE ( 'Discount Cap'[Value], 30 )
+		formatString: 0
+		displayFolder: 6 What-if
+		lineageTag: f37ad164-3e0a-42da-8486-ca14390c148b
+
+	measure 'Profit at Cap' =
+			VAR Cap = [Discount Cap Value]
+			RETURN
+				SUMX (
+					FILTER ( Sales, Sales[Valid_Revenue] = "Yes" ),
+					Sales[Gross_Sales_INR] * ( 1 - MIN ( Sales[Discount_Pct], Cap ) / 100 )
+						- Sales[Estimated_Cost_INR]
+						- Sales[Shipping_Cost_INR]
+				)
+		formatString: #,0
+		displayFolder: 6 What-if
+		lineageTag: 50081df7-5de5-4774-916a-70eeb5aa6dfe
+
+	measure 'Profit Uplift (₹ Lakh)' = DIVIDE ( [Profit at Cap] - [Profit], 100000 )
+		formatString: #,0.0
+		displayFolder: 6 What-if
+		lineageTag: ca786fc2-5af2-49e9-8a7c-53ee6113f091
+
+	measure 'Margin at Cap' =
+			VAR Cap = [Discount Cap Value]
+			VAR RevAtCap =
+				SUMX (
+					FILTER ( Sales, Sales[Valid_Revenue] = "Yes" ),
+					Sales[Gross_Sales_INR] * ( 1 - MIN ( Sales[Discount_Pct], Cap ) / 100 )
+				)
+			RETURN
+				DIVIDE ( [Profit at Cap], RevAtCap )
+		formatString: 0.0%
+		displayFolder: 6 What-if
+		lineageTag: e182f87d-4574-4528-b2af-c14676ece955
+
+	column Dummy
+		dataType: int64
+		isHidden
+		lineageTag: ba8eafe5-3113-4c2d-bacc-c77e7693e1f2
+		summarizeBy: none
+		sourceColumn: Dummy
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+					Source = #table ( type table [Dummy = Int64.Type], {{1}} )
+				in
+					Source
+

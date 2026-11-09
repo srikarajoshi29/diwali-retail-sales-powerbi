@@ -1,0 +1,58 @@
+table Dim_Date
+	lineageTag: 7eb229c4-7437-4780-b35f-18a00e276bed
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: dd-mmm-yyyy
+		lineageTag: e221d12e-f5bc-45d6-95aa-c17441d7e94b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: f0463651-b978-43a5-b48f-5df8fdaff15d
+		summarizeBy: none
+		sourceColumn: [Year]
+
+	column 'Month No'
+		dataType: int64
+		formatString: 0
+		lineageTag: eb11a7ec-f2f3-422c-8b93-d3f4db86a1e5
+		summarizeBy: none
+		sourceColumn: [Month No]
+
+	column Month
+		dataType: string
+		lineageTag: 5142c38c-6b94-472d-9fa3-d0e2267c69de
+		summarizeBy: none
+		sourceColumn: [Month]
+		sortByColumn: 'Month No'
+
+	column 'Day Name'
+		dataType: string
+		lineageTag: dc5755d8-3553-4dca-b3b3-34ea61f7e6a9
+		summarizeBy: none
+		sourceColumn: [Day Name]
+
+	column 'Day Type'
+		dataType: string
+		lineageTag: c84c07b3-f538-4eee-9bf2-c106ea6203ee
+		summarizeBy: none
+		sourceColumn: [Day Type]
+
+	partition Dim_Date = calculated
+		mode: import
+		source =
+				ADDCOLUMNS (
+					CALENDAR ( DATE ( 2022, 9, 1 ), DATE ( 2025, 12, 31 ) ),
+					"Year", YEAR ( [Date] ),
+					"Month No", MONTH ( [Date] ),
+					"Month", FORMAT ( [Date], "MMM" ),
+					"Day Name", FORMAT ( [Date], "ddd" ),
+					"Day Type", IF ( WEEKDAY ( [Date], 2 ) >= 6, "Weekend", "Weekday" )
+				)
+

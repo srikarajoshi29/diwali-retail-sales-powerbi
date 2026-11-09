@@ -1,0 +1,14 @@
+relationship c846250b-1604-4351-91e7-abb2f2e0c837
+	fromColumn: Sales.Order_Date
+	toColumn: Dim_Date.Date
+
+relationship 6758cb2f-30b4-4ef7-b9ec-e6dfc470e37a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Sales.Ship_Date
+	toColumn: LocalDateTable_0a96343a-2289-46c0-bf5e-3d775007b9c4.Date
+
+relationship 461dd414-1fe6-4107-ac84-88f85b4df66a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Sales.Delivery_Date
+	toColumn: LocalDateTable_b84bf5ae-a3a9-433a-a314-73237c84062d.Date
+

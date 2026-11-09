@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "DiwaliDashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "e5075e9e-f86c-4fe6-8246-c7c671a4917b"
+  }
+}

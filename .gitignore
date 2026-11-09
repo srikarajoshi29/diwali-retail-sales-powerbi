@@ -1,0 +1,6 @@
+# Power BI local and cache files
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+Raw FIles/
+Diwali_Retail_Sales.csv
+__pycache__/
